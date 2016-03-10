@@ -34,7 +34,7 @@
 // Hardware configuration
 //
 
-// Set up nRF24L01 radio on SPI bus plus pins 9 & 10
+// Set up nRF24L01 radio on SPI bus plus pins 9 & 10 (CE & CS)
 
 RF24 radio(9,10);
 
@@ -108,7 +108,7 @@ void setup(void)
   // Print preamble
   //
 
-  Serial.begin(57600);
+  Serial.begin(115200);
   printf_begin();
   printf("\n\rRF24/examples/led_remote/\n\r");
   printf("ROLE: %s\n\r",role_friendly_name[role]);
@@ -229,11 +229,10 @@ void loop(void)
     if ( radio.available() )
     {
       // Dump the payloads until we've gotten everything
-      bool done = false;
-      while (!done)
+      while (radio.available())
       {
         // Fetch the payload, and see if this was the last one.
-        done = radio.read( button_states, num_button_pins );
+        radio.read( button_states, num_button_pins );
 
         // Spew it
         printf("Got buttons\n\r");
